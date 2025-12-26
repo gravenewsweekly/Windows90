@@ -13,6 +13,7 @@
             box-sizing: border-box;
             font-family: "MS Sans Serif", "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
             -webkit-tap-highlight-color: transparent;
+            user-select: none;
         }
         
         body {
@@ -25,6 +26,9 @@
             flex-direction: column;
             align-items: center;
             justify-content: center;
+            touch-action: manipulation;
+            image-rendering: pixelated;
+            image-rendering: crisp-edges;
         }
         
         /* Main Container - Windows 95 Window Style */
@@ -37,10 +41,23 @@
             box-shadow: 3px 3px 10px rgba(0, 0, 0, 0.3);
             margin: 10px auto;
             display: none;
+            position: relative;
         }
         
         .window.active {
             display: block;
+            animation: windowAppear 0.3s ease-out;
+        }
+        
+        @keyframes windowAppear {
+            from {
+                opacity: 0;
+                transform: translateY(-10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
         }
         
         /* Window Title Bar */
@@ -54,6 +71,7 @@
             font-weight: bold;
             font-size: 14px;
             height: 30px;
+            cursor: move;
         }
         
         .title-bar-controls {
@@ -72,6 +90,12 @@
             align-items: center;
             justify-content: center;
             cursor: pointer;
+            transition: all 0.1s;
+        }
+        
+        .title-bar-button:active {
+            border-color: #000 #dfdfdf #dfdfdf #000;
+            transform: translate(1px, 1px);
         }
         
         /* Window Content */
@@ -95,10 +119,16 @@
             padding: 4px 12px;
             cursor: pointer;
             border: 1px solid transparent;
+            position: relative;
         }
         
         .menu-item:hover {
             border-color: #dfdfdf #000 #000 #dfdfdf;
+        }
+        
+        .menu-item.active {
+            background-color: #000080;
+            color: white;
         }
         
         /* Game Elements */
@@ -112,13 +142,20 @@
         }
         
         .stats-bar {
-            display: flex;
-            justify-content: space-between;
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 10px;
             width: 100%;
             background-color: #c0c0c0;
-            padding: 8px 12px;
+            padding: 10px;
             border: 2px inset;
             font-size: 14px;
+        }
+        
+        .stat-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
         }
         
         .game-area {
@@ -128,6 +165,7 @@
             border: 4px inset #808080;
             position: relative;
             overflow: hidden;
+            touch-action: none;
         }
         
         .task {
@@ -143,21 +181,38 @@
             font-weight: bold;
             cursor: pointer;
             user-select: none;
-            transition: transform 0.1s;
+            transition: transform 0.1s, opacity 0.3s;
+            z-index: 10;
+            box-shadow: 2px 2px 5px rgba(0, 0, 0, 0.5);
         }
         
         .task:hover, .task:active {
             transform: scale(1.05);
+            border-color: #00ffff;
         }
         
         .task.completed {
             background-color: #00c000;
             border-color: #00ff00;
+            animation: taskComplete 0.5s ease-out;
         }
         
         .task.failed {
             background-color: #c00000;
             border-color: #ff0000;
+            animation: taskFail 0.5s ease-out;
+        }
+        
+        @keyframes taskComplete {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.2); }
+            100% { transform: scale(0); opacity: 0; }
+        }
+        
+        @keyframes taskFail {
+            0% { transform: scale(1); }
+            50% { transform: scale(0.8); }
+            100% { transform: scale(0); opacity: 0; }
         }
         
         .progress-bar {
@@ -171,8 +226,8 @@
         .progress-fill {
             height: 100%;
             background-color: #000080;
-            width: 0%;
-            transition: width 0.3s;
+            width: 100%;
+            transition: width 0.5s cubic-bezier(0.34, 1.56, 0.64, 1);
         }
         
         /* Buttons in Windows 95 Style */
@@ -180,16 +235,25 @@
             background-color: #c0c0c0;
             border: 2px solid;
             border-color: #dfdfdf #000 #000 #dfdfdf;
-            padding: 6px 20px;
+            padding: 8px 20px;
             font-weight: bold;
             cursor: pointer;
             font-size: 14px;
-            min-height: 28px;
-            min-width: 80px;
+            min-height: 32px;
+            min-width: 90px;
+            transition: all 0.1s;
+            position: relative;
+            overflow: hidden;
         }
         
         button:active {
             border-color: #000 #dfdfdf #dfdfdf #000;
+            transform: translate(1px, 1px);
+        }
+        
+        button:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
         }
         
         button.primary {
@@ -198,12 +262,13 @@
         }
         
         /* Form Elements */
-        input, textarea {
+        input, textarea, select {
             background-color: white;
             border: 2px inset #808080;
-            padding: 6px;
+            padding: 8px;
             font-size: 14px;
             width: 100%;
+            font-family: inherit;
         }
         
         /* Content Pages */
@@ -215,6 +280,21 @@
             overflow-y: auto;
             font-size: 14px;
             line-height: 1.5;
+            scrollbar-width: thin;
+            scrollbar-color: #c0c0c0 #fff;
+        }
+        
+        .content-page::-webkit-scrollbar {
+            width: 16px;
+        }
+        
+        .content-page::-webkit-scrollbar-track {
+            background: #fff;
+        }
+        
+        .content-page::-webkit-scrollbar-thumb {
+            background-color: #c0c0c0;
+            border: 2px inset #808080;
         }
         
         .content-page h2 {
@@ -244,6 +324,7 @@
             color: #c00000;
             font-size: 24px;
             margin-bottom: 15px;
+            text-shadow: 2px 2px 0 #000;
         }
         
         .score-display {
@@ -251,6 +332,7 @@
             font-weight: bold;
             color: #000080;
             margin: 15px 0;
+            text-shadow: 1px 1px 0 #fff;
         }
         
         /* Footer */
@@ -260,17 +342,21 @@
             text-align: center;
             font-size: 12px;
             padding: 10px;
+            opacity: 0.8;
         }
         
         /* Mobile Optimizations */
         @media (max-width: 768px) {
             body {
                 padding: 5px;
+                justify-content: flex-start;
+                padding-top: 20px;
             }
             
             .window {
                 width: 100%;
                 margin: 5px auto;
+                max-width: 100%;
             }
             
             .game-area {
@@ -278,14 +364,25 @@
             }
             
             .task {
-                width: 50px;
-                height: 50px;
-                font-size: 12px;
+                width: 55px;
+                height: 55px;
+                font-size: 14px;
             }
             
             button {
-                min-width: 70px;
-                padding: 8px 15px;
+                min-width: 80px;
+                padding: 10px 15px;
+                font-size: 13px;
+            }
+            
+            .stats-bar {
+                grid-template-columns: 1fr;
+                gap: 5px;
+                font-size: 13px;
+            }
+            
+            .content-page {
+                height: 250px;
             }
         }
         
@@ -294,6 +391,7 @@
             width: 100%;
             border-collapse: collapse;
             margin-top: 15px;
+            font-size: 13px;
         }
         
         .high-scores th {
@@ -301,6 +399,8 @@
             color: white;
             padding: 8px;
             text-align: left;
+            position: sticky;
+            top: 0;
         }
         
         .high-scores td {
@@ -312,16 +412,23 @@
             background-color: #e0e0e0;
         }
         
+        .high-scores tr:hover {
+            background-color: #d0d0d0;
+        }
+        
         /* Instructions */
         .instructions {
             font-size: 13px;
             line-height: 1.4;
             margin-bottom: 15px;
+            background-color: #fff;
+            padding: 15px;
+            border: 2px inset #808080;
         }
         
         /* Hidden Class */
         .hidden {
-            display: none;
+            display: none !important;
         }
         
         /* Game Controls */
@@ -330,10 +437,128 @@
             gap: 10px;
             justify-content: center;
             flex-wrap: wrap;
+            margin-top: 10px;
+        }
+        
+        /* Notification */
+        .notification {
+            position: fixed;
+            top: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            background-color: #c0c0c0;
+            border: 2px solid #000;
+            padding: 10px 20px;
+            z-index: 1000;
+            font-weight: bold;
+            box-shadow: 3px 3px 5px rgba(0, 0, 0, 0.3);
+            display: none;
+        }
+        
+        .notification.show {
+            display: block;
+            animation: notificationSlide 0.3s ease-out;
+        }
+        
+        @keyframes notificationSlide {
+            from {
+                top: -50px;
+                opacity: 0;
+            }
+            to {
+                top: 20px;
+                opacity: 1;
+            }
+        }
+        
+        /* Level Up Animation */
+        .level-up {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            font-size: 48px;
+            font-weight: bold;
+            color: #ffff00;
+            text-shadow: 3px 3px 0 #000;
+            z-index: 100;
+            animation: levelUpAnim 1s ease-out;
+            display: none;
+        }
+        
+        @keyframes levelUpAnim {
+            0% { transform: translate(-50%, -50%) scale(0); opacity: 0; }
+            50% { transform: translate(-50%, -50%) scale(1.2); opacity: 1; }
+            100% { transform: translate(-50%, -50%) scale(1); opacity: 0; }
+        }
+        
+        /* Loading Spinner */
+        .loading {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: #008080;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            z-index: 2000;
+            transition: opacity 0.5s;
+        }
+        
+        .loading.hidden {
+            opacity: 0;
+            pointer-events: none;
+        }
+        
+        .loading-spinner {
+            width: 50px;
+            height: 50px;
+            border: 5px solid #c0c0c0;
+            border-top: 5px solid #000080;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin-bottom: 20px;
+        }
+        
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        
+        /* Performance warning */
+        .performance-warning {
+            background-color: #c00000;
+            color: white;
+            padding: 5px 10px;
+            font-size: 11px;
+            text-align: center;
+            border: 1px solid #fff;
+            margin-bottom: 10px;
+            display: none;
         }
     </style>
 </head>
 <body>
+    <!-- Loading Screen -->
+    <div id="loading" class="loading">
+        <div class="loading-spinner"></div>
+        <div style="color: white; font-size: 18px; margin-top: 20px;">Loading Windows 90s...</div>
+    </div>
+    
+    <!-- Performance Warning -->
+    <div id="performance-warning" class="performance-warning">
+        Warning: High task count may affect performance on some devices
+    </div>
+    
+    <!-- Notification Area -->
+    <div id="notification" class="notification"></div>
+    
+    <!-- Level Up Animation -->
+    <div id="level-up-anim" class="level-up">LEVEL UP!</div>
+    
     <!-- Main Menu Window -->
     <div id="main-menu" class="window active">
         <div class="title-bar">
@@ -346,15 +571,15 @@
         </div>
         
         <div class="menu-bar">
+            <div class="menu-item active" onclick="showWindow('main-menu')">Home</div>
             <div class="menu-item" onclick="showWindow('game')">Game</div>
             <div class="menu-item" onclick="showWindow('high-scores')">High Scores</div>
             <div class="menu-item" onclick="showWindow('about')">About</div>
-            <div class="menu-item" onclick="showWindow('legal')">Legal</div>
         </div>
         
         <div class="window-body">
             <div class="game-container">
-                <h1 style="color: #000080; text-align: center;">Windows 90s Productivity Challenge</h1>
+                <h1 style="color: #000080; text-align: center; font-size: 24px;">Windows 90s Productivity Challenge</h1>
                 <div style="text-align: center; margin: 20px 0;">
                     <div style="font-size: 60px; color: #008080;">📟</div>
                     <p style="margin: 15px 0; font-size: 16px;">Complete tasks before they expire! Each level gets harder!</p>
@@ -362,10 +587,11 @@
                 
                 <div class="instructions">
                     <p><strong>How to play:</strong></p>
-                    <p>1. Click on tasks before they disappear</p>
-                    <p>2. Complete tasks to earn points</p>
-                    <p>3. Each level has more tasks and less time</p>
-                    <p>4. Miss 3 tasks and the game ends</p>
+                    <p>✓ Click on tasks before they disappear</p>
+                    <p>✓ Complete tasks to earn points</p>
+                    <p>✓ Each level has more tasks and less time</p>
+                    <p>✓ Miss 3 tasks and the game ends</p>
+                    <p style="margin-top: 10px; color: #000080; font-weight: bold;">Best Score: <span id="best-score-display">0</span></p>
                 </div>
                 
                 <div style="display: flex; flex-direction: column; gap: 15px; width: 100%;">
@@ -381,7 +607,7 @@
     <!-- Game Window -->
     <div id="game" class="window">
         <div class="title-bar">
-            <div class="title-bar-text">Game - Level <span id="level-display">1</span></div>
+            <div class="title-bar-text">Productivity Challenge - Level <span id="level-display">1</span></div>
             <div class="title-bar-controls">
                 <button class="title-bar-button" onclick="showWindow('main-menu')">×</button>
             </div>
@@ -389,10 +615,22 @@
         
         <div class="window-body">
             <div class="stats-bar">
-                <div>Score: <span id="score">0</span></div>
-                <div>Level: <span id="level">1</span></div>
-                <div>Lives: <span id="lives">3</span></div>
-                <div>Tasks: <span id="tasks-completed">0</span>/<span id="tasks-total">5</span></div>
+                <div class="stat-item">
+                    <span>Score:</span>
+                    <span id="score">0</span>
+                </div>
+                <div class="stat-item">
+                    <span>Level:</span>
+                    <span id="level">1</span>
+                </div>
+                <div class="stat-item">
+                    <span>Lives:</span>
+                    <span id="lives">3</span>
+                </div>
+                <div class="stat-item">
+                    <span>Tasks:</span>
+                    <span id="tasks-completed">0</span>/<span id="tasks-total">5</span>
+                </div>
             </div>
             
             <div class="progress-bar">
@@ -423,17 +661,17 @@
         <div class="window-body">
             <div class="game-over">
                 <h2>GAME OVER</h2>
-                <div style="font-size: 60px; color: #c00000;">💀</div>
+                <div style="font-size: 60px; color: #c00000; margin: 20px 0;">💀</div>
                 <p>Your productivity has crashed!</p>
                 
                 <div class="score-display">
-                    Score: <span id="final-score">0</span>
+                    <span id="final-score">0</span>
                 </div>
                 
                 <p>Level reached: <span id="final-level">1</span></p>
                 
                 <div style="margin: 20px 0;">
-                    <input type="text" id="player-name" placeholder="Enter your name" maxlength="20" style="margin-bottom: 15px;">
+                    <input type="text" id="player-name" placeholder="Enter your name (max 20 chars)" maxlength="20" style="margin-bottom: 15px;">
                     <div class="controls">
                         <button class="primary" onclick="saveScore()">Save Score</button>
                         <button onclick="startGame()">Play Again</button>
@@ -566,9 +804,17 @@
                     </select>
                 </div>
                 
+                <div style="margin-bottom: 15px;">
+                    <label>
+                        <input type="checkbox" id="performance-mode">
+                        Performance Mode (Reduces animations)
+                    </label>
+                </div>
+                
                 <div style="text-align: center; margin-top: 20px;">
                     <button class="primary" onclick="saveSettings()">Save Settings</button>
                     <button onclick="showWindow('main-menu')">Cancel</button>
+                    <button onclick="resetToDefaults()" style="margin-top: 10px;">Reset to Defaults</button>
                 </div>
             </div>
         </div>
@@ -592,51 +838,12 @@
                 <p>Experience the thrill of managing multiple tasks before deadlines, just like in a real 1990s office environment. The game tests your reflexes, focus, and ability to handle increasing pressure.</p>
                 
                 <h3>Version</h3>
-                <p>Version 1.0.0 (Release 2025)</p>
+                <p>Version 1.1.0 (Enhanced Release 2025)</p>
                 
-                <div style="text-align: center; margin-top: 20px;">
-                    <button onclick="showWindow('main-menu')">Back to Menu</button>
-                </div>
-            </div>
-        </div>
-    </div>
-    
-    <!-- Legal Window (TOS, Privacy, etc.) -->
-    <div id="legal" class="window">
-        <div class="title-bar">
-            <div class="title-bar-text">Legal Information</div>
-            <div class="title-bar-controls">
-                <button class="title-bar-button" onclick="showWindow('main-menu')">×</button>
-            </div>
-        </div>
-        
-        <div class="window-body">
-            <div class="content-page">
-                <h2>Terms of Service</h2>
-                <p>By using this application, you agree to the following terms:</p>
-                <ul>
-                    <li>This is a ₹10 game for entertainment purposes</li>
-                    <li>No personal data is collected or stored</li>
-                    <li>High scores are stored locally on your device</li>
-                    <li>You may not modify, distribute, or sell this game without permission</li>
-                </ul>
-                
-                <h2>Privacy Policy</h2>
-                <p>We respect your privacy:</p>
-                <ul>
-                    <li>No personal information is collected</li>
-                    <li>No tracking cookies are used</li>
-                    <li>Game data is stored locally on your device</li>
-                    <li>We do not share any data with third parties</li>
-                </ul>
-                
-                <h2>About Company</h2>
-                <p>This application is developed by Daksh Hande, a software developer who creates nostalgic games.</p>
-                
-                <h2>Contact</h2>
-                <p>For questions or feedback, please email:</p>
-                <p style="font-weight: bold; color: #000080;">handedaksh@gmail.com</p>
-                <p><em>Note: Reply back will arrive shortly within 24-48 hours.</em></p>
+                <h3>Credits</h3>
+                <p>Developed by Daksh Hande<br>
+                Sound effects generated with Web Audio API<br>
+                Windows 95 theme inspired by Microsoft</p>
                 
                 <div style="text-align: center; margin-top: 20px;">
                     <button onclick="showWindow('main-menu')">Back to Menu</button>
@@ -647,11 +854,11 @@
     
     <!-- Footer -->
     <div class="footer">
-        <p> Mobile-Friendly</p>
+        <p>Mobile-Friendly</p>
     </div>
 
     <script>
-        // Game State
+        // Enhanced Game State with better memory management
         let gameState = {
             score: 0,
             level: 1,
@@ -663,111 +870,265 @@
             gameActive: false,
             gamePaused: false,
             tasks: [],
-            taskSpeed: 1500, // Time tasks stay on screen (ms)
-            spawnRate: 800, // Time between new tasks (ms)
+            taskSpeed: 1500,
+            spawnRate: 800,
             gameLoopInterval: null,
             timeInterval: null,
-            difficulty: 'normal'
-        };
-        
-        // High Scores
-        let highScores = JSON.parse(localStorage.getItem('productivityHighScores')) || [];
-        
-        // Settings
-        let settings = JSON.parse(localStorage.getItem('gameSettings')) || {
             difficulty: 'normal',
-            sound: 'on',
-            theme: 'windows95'
+            performanceMode: false,
+            taskIds: 0,
+            activeAnimations: new Set(),
+            gameStartTime: null
         };
         
-        // DOM Elements
-        const windows = document.querySelectorAll('.window');
-        const gameArea = document.getElementById('game-area');
-        const scoreDisplay = document.getElementById('score');
-        const levelDisplay = document.getElementById('level');
-        const livesDisplay = document.getElementById('lives');
-        const tasksCompletedDisplay = document.getElementById('tasks-completed');
-        const tasksTotalDisplay = document.getElementById('tasks-total');
-        const timeProgress = document.getElementById('time-progress');
-        const levelDisplayMain = document.getElementById('level-display');
-        const finalScoreDisplay = document.getElementById('final-score');
-        const finalLevelDisplay = document.getElementById('final-level');
-        const highScoresBody = document.getElementById('high-scores-body');
-        const difficultySelect = document.getElementById('difficulty');
-        const soundSelect = document.getElementById('sound');
-        const themeSelect = document.getElementById('theme');
+        // High Scores with better data structure
+        let highScores = [];
+        let settings = {};
         
-        // Initialize
-        document.addEventListener('DOMContentLoaded', function() {
-            // Load settings
-            loadSettings();
-            
-            // Load high scores
-            loadHighScores();
-            
-            // Set up menu buttons
+        // DOM Elements cache
+        const dom = {
+            windows: document.querySelectorAll('.window'),
+            gameArea: document.getElementById('game-area'),
+            scoreDisplay: document.getElementById('score'),
+            levelDisplay: document.getElementById('level'),
+            livesDisplay: document.getElementById('lives'),
+            tasksCompletedDisplay: document.getElementById('tasks-completed'),
+            tasksTotalDisplay: document.getElementById('tasks-total'),
+            timeProgress: document.getElementById('time-progress'),
+            levelDisplayMain: document.getElementById('level-display'),
+            finalScoreDisplay: document.getElementById('final-score'),
+            finalLevelDisplay: document.getElementById('final-level'),
+            highScoresBody: document.getElementById('high-scores-body'),
+            difficultySelect: document.getElementById('difficulty'),
+            soundSelect: document.getElementById('sound'),
+            themeSelect: document.getElementById('theme'),
+            playerNameInput: document.getElementById('player-name'),
+            pauseBtn: document.getElementById('pause-btn'),
+            notification: document.getElementById('notification'),
+            levelUpAnim: document.getElementById('level-up-anim'),
+            loading: document.getElementById('loading'),
+            performanceWarning: document.getElementById('performance-warning'),
+            bestScoreDisplay: document.getElementById('best-score-display'),
+            performanceModeCheckbox: document.getElementById('performance-mode')
+        };
+        
+        // Audio context for sound effects
+        let audioContext = null;
+        let audioEnabled = false;
+        
+        // Initialize game
+        function init() {
+            try {
+                // Load data from localStorage
+                loadSettings();
+                loadHighScores();
+                updateBestScoreDisplay();
+                
+                // Initialize audio
+                initAudio();
+                
+                // Set up event listeners
+                setupEventListeners();
+                
+                // Resize handler
+                resizeGameArea();
+                window.addEventListener('resize', debounce(resizeGameArea, 250));
+                
+                // Hide loading screen after initialization
+                setTimeout(() => {
+                    dom.loading.classList.add('hidden');
+                }, 500);
+                
+                // Prevent context menu on game area
+                dom.gameArea.addEventListener('contextmenu', (e) => e.preventDefault());
+                
+                // Performance monitoring
+                if ('performance' in window) {
+                    performance.mark('gameInitialized');
+                }
+                
+                console.log('Game initialized successfully');
+            } catch (error) {
+                console.error('Initialization error:', error);
+                showNotification('Error initializing game', 'error');
+            }
+        }
+        
+        // Initialize audio system
+        function initAudio() {
+            try {
+                if (settings.sound === 'on') {
+                    audioContext = new (window.AudioContext || window.webkitAudioContext)();
+                    audioEnabled = true;
+                }
+            } catch (e) {
+                console.log('Audio not supported:', e);
+                audioEnabled = false;
+            }
+        }
+        
+        // Setup event listeners
+        function setupEventListeners() {
+            // Window controls
             document.querySelectorAll('.title-bar-button').forEach(button => {
-                button.addEventListener('click', function() {
-                    const window = this.closest('.window');
-                    const windowId = window.id;
-                    
-                    if (windowId === 'game' && gameState.gameActive && !gameState.gamePaused) {
-                        pauseGame();
-                    }
-                    
-                    showWindow('main-menu');
+                button.addEventListener('click', handleWindowControl);
+            });
+            
+            // Menu items
+            document.querySelectorAll('.menu-item').forEach(item => {
+                item.addEventListener('click', function() {
+                    document.querySelectorAll('.menu-item').forEach(i => i.classList.remove('active'));
+                    this.classList.add('active');
                 });
             });
             
-            // Initialize game area size
-            resizeGameArea();
-            window.addEventListener('resize', resizeGameArea);
-        });
-        
-        // Window Navigation
-        function showWindow(windowId) {
-            windows.forEach(window => {
-                window.classList.remove('active');
+            // Prevent default touch behavior
+            document.addEventListener('touchmove', (e) => {
+                if (e.target.classList.contains('game-area')) {
+                    e.preventDefault();
+                }
+            }, { passive: false });
+            
+            // Handle visibility change (pause when tab is hidden)
+            document.addEventListener('visibilitychange', () => {
+                if (document.hidden && gameState.gameActive && !gameState.gamePaused) {
+                    pauseGame();
+                    showNotification('Game auto-paused', 'info');
+                }
             });
             
-            document.getElementById(windowId).classList.add('active');
+            // Prevent accidental refresh
+            window.addEventListener('beforeunload', (e) => {
+                if (gameState.gameActive && !gameState.gamePaused) {
+                    e.preventDefault();
+                    e.returnValue = 'You have an active game. Are you sure you want to leave?';
+                    return e.returnValue;
+                }
+            });
+        }
+        
+        // Handle window control buttons
+        function handleWindowControl(e) {
+            const button = e.target;
+            const window = button.closest('.window');
+            const windowId = window.id;
             
-            // Special handling for certain windows
-            if (windowId === 'high-scores') {
-                loadHighScores();
-            } else if (windowId === 'game' && !gameState.gameActive) {
-                resetGame();
-            } else if (windowId === 'main-menu' && gameState.gameActive && !gameState.gamePaused) {
-                pauseGame();
+            switch(button.textContent) {
+                case '_':
+                    // Minimize (hide)
+                    window.classList.remove('active');
+                    if (windowId === 'game' && gameState.gameActive && !gameState.gamePaused) {
+                        pauseGame();
+                    }
+                    break;
+                case '□':
+                    // Maximize (toggle full width)
+                    window.style.maxWidth = window.style.maxWidth ? '' : '95%';
+                    break;
+                case '×':
+                    // Close
+                    if (windowId === 'game' && gameState.gameActive && !gameState.gamePaused) {
+                        if (confirm('Are you sure you want to quit? Your progress will be lost.')) {
+                            showWindow('main-menu');
+                        }
+                    } else {
+                        showWindow('main-menu');
+                    }
+                    break;
+            }
+        }
+        
+        // Window Navigation with animation
+        function showWindow(windowId) {
+            // Clear any ongoing animations
+            clearAllTimeouts();
+            
+            // Update menu active state
+            document.querySelectorAll('.menu-item').forEach(item => {
+                item.classList.remove('active');
+                if (item.textContent.toLowerCase().includes(windowId.replace('-', ' ')) || 
+                    (windowId === 'main-menu' && item.textContent === 'Home')) {
+                    item.classList.add('active');
+                }
+            });
+            
+            // Hide all windows
+            dom.windows.forEach(window => {
+                if (window.classList.contains('active')) {
+                    window.classList.remove('active');
+                    window.style.animation = 'none';
+                    setTimeout(() => {
+                        window.style.animation = '';
+                    }, 10);
+                }
+            });
+            
+            // Show selected window
+            const targetWindow = document.getElementById(windowId);
+            if (targetWindow) {
+                targetWindow.classList.add('active');
+                
+                // Special handling for certain windows
+                switch(windowId) {
+                    case 'high-scores':
+                        loadHighScores();
+                        break;
+                    case 'game':
+                        if (!gameState.gameActive) {
+                            resetGame();
+                        }
+                        break;
+                    case 'main-menu':
+                        if (gameState.gameActive && !gameState.gamePaused) {
+                            pauseGame();
+                        }
+                        updateBestScoreDisplay();
+                        break;
+                }
             }
         }
         
         // Game Functions
         function startGame() {
+            if (gameState.gameActive) {
+                if (confirm('You have an active game. Do you want to restart?')) {
+                    resetGame();
+                }
+                return;
+            }
+            
             showWindow('game');
             resetGame();
             
             gameState.gameActive = true;
             gameState.gamePaused = false;
-            document.getElementById('pause-btn').textContent = 'Pause';
+            gameState.gameStartTime = Date.now();
+            dom.pauseBtn.textContent = 'Pause';
             
             // Start game loops
             startGameLoop();
             startTimer();
+            
+            showNotification('Game started! Good luck!', 'success');
+            playSound('start');
         }
         
         function resetGame() {
-            // Clear existing tasks
-            gameArea.innerHTML = '';
-            gameState.tasks = [];
+            // Clear game area
+            clearGameArea();
             
-            // Reset game state based on difficulty
+            // Clear intervals
+            clearAllTimeouts();
+            
+            // Reset game state
             gameState.score = 0;
             gameState.level = 1;
             gameState.lives = 3;
             gameState.tasksCompleted = 0;
+            gameState.taskIds = 0;
+            gameState.activeAnimations.clear();
             
-            // Set initial values based on difficulty
+            // Update difficulty settings
             updateDifficultySettings();
             
             gameState.timeRemaining = gameState.maxTime;
@@ -775,79 +1136,89 @@
             // Update displays
             updateDisplays();
             
-            // Clear any existing intervals
-            if (gameState.gameLoopInterval) clearInterval(gameState.gameLoopInterval);
-            if (gameState.timeInterval) clearInterval(gameState.timeInterval);
+            // Clear any messages
+            dom.notification.classList.remove('show');
+        }
+        
+        function clearGameArea() {
+            // Use while loop for better performance
+            while (dom.gameArea.firstChild) {
+                dom.gameArea.removeChild(dom.gameArea.firstChild);
+            }
+            gameState.tasks = [];
+        }
+        
+        function clearAllTimeouts() {
+            if (gameState.gameLoopInterval) {
+                clearInterval(gameState.gameLoopInterval);
+                gameState.gameLoopInterval = null;
+            }
+            if (gameState.timeInterval) {
+                clearInterval(gameState.timeInterval);
+                gameState.timeInterval = null;
+            }
+            
+            // Clear any pending timeouts
+            const highestId = setTimeout(() => {}, 0);
+            for (let i = 0; i < highestId; i++) {
+                clearTimeout(i);
+            }
         }
         
         function updateDifficultySettings() {
-            // Adjust game parameters based on difficulty
-            switch(settings.difficulty) {
-                case 'easy':
-                    gameState.tasksTotal = 4 + gameState.level;
-                    gameState.maxTime = 35 - gameState.level * 2;
-                    gameState.taskSpeed = 1800 - gameState.level * 100;
-                    gameState.spawnRate = 1000 - gameState.level * 50;
-                    break;
-                case 'normal':
-                    gameState.tasksTotal = 5 + gameState.level;
-                    gameState.maxTime = 30 - gameState.level * 2;
-                    gameState.taskSpeed = 1500 - gameState.level * 100;
-                    gameState.spawnRate = 800 - gameState.level * 50;
-                    break;
-                case 'hard':
-                    gameState.tasksTotal = 6 + gameState.level * 1.5;
-                    gameState.maxTime = 25 - gameState.level * 2;
-                    gameState.taskSpeed = 1200 - gameState.level * 100;
-                    gameState.spawnRate = 600 - gameState.level * 40;
-                    break;
-                case 'insane':
-                    gameState.tasksTotal = 8 + gameState.level * 2;
-                    gameState.maxTime = 20 - gameState.level;
-                    gameState.taskSpeed = 800 - gameState.level * 50;
-                    gameState.spawnRate = 400 - gameState.level * 20;
-                    break;
-            }
+            const baseValues = {
+                easy: { tasks: 4, time: 35, taskSpeed: 1800, spawnRate: 1000 },
+                normal: { tasks: 5, time: 30, taskSpeed: 1500, spawnRate: 800 },
+                hard: { tasks: 6, time: 25, taskSpeed: 1200, spawnRate: 600 },
+                insane: { tasks: 8, time: 20, taskSpeed: 800, spawnRate: 400 }
+            };
             
-            // Ensure minimum values
-            gameState.maxTime = Math.max(10, gameState.maxTime);
-            gameState.taskSpeed = Math.max(300, gameState.taskSpeed);
-            gameState.spawnRate = Math.max(200, gameState.spawnRate);
+            const base = baseValues[settings.difficulty] || baseValues.normal;
+            
+            gameState.tasksTotal = Math.floor(base.tasks + gameState.level * (settings.difficulty === 'insane' ? 2 : 1));
+            gameState.maxTime = Math.max(10, base.time - gameState.level * 2);
+            gameState.taskSpeed = Math.max(400, base.taskSpeed - gameState.level * 100);
+            gameState.spawnRate = Math.max(300, base.spawnRate - gameState.level * 50);
+            
+            // Show performance warning for high task counts
+            dom.performanceWarning.style.display = gameState.tasksTotal > 15 ? 'block' : 'none';
             
             // Update display
-            tasksTotalDisplay.textContent = Math.floor(gameState.tasksTotal);
+            dom.tasksTotalDisplay.textContent = gameState.tasksTotal;
             gameState.timeRemaining = gameState.maxTime;
             updateTimeProgress();
         }
         
         function startGameLoop() {
-            gameState.gameLoopInterval = setInterval(function() {
+            gameState.gameLoopInterval = setInterval(() => {
                 if (gameState.gamePaused || !gameState.gameActive) return;
                 
-                // Spawn new task if we haven't reached the total
+                // Spawn new task if under limit
                 if (gameState.tasks.length < gameState.tasksTotal) {
                     spawnTask();
                 }
                 
-                // Check if level is complete
+                // Check level completion
                 if (gameState.tasksCompleted >= gameState.tasksTotal) {
                     completeLevel();
+                }
+                
+                // Performance check
+                if (gameState.tasks.length > 20 && !gameState.performanceMode) {
+                    showNotification('Many tasks! Consider Performance Mode', 'warning');
                 }
             }, gameState.spawnRate);
         }
         
         function startTimer() {
-            gameState.timeInterval = setInterval(function() {
+            gameState.timeInterval = setInterval(() => {
                 if (gameState.gamePaused || !gameState.gameActive) return;
                 
                 gameState.timeRemaining--;
                 updateTimeProgress();
                 
                 if (gameState.timeRemaining <= 0) {
-                    // Time's up - lose a life
                     loseLife();
-                    
-                    // Reset time for next round
                     gameState.timeRemaining = gameState.maxTime;
                     updateTimeProgress();
                 }
@@ -855,56 +1226,108 @@
         }
         
         function spawnTask() {
-            const gameAreaRect = gameArea.getBoundingClientRect();
+            if (!dom.gameArea) return;
+            
+            const gameAreaRect = dom.gameArea.getBoundingClientRect();
             const taskSize = 60;
+            const padding = 10;
             
-            // Calculate position (avoid edges)
-            const maxX = gameAreaRect.width - taskSize - 10;
-            const maxY = gameAreaRect.height - taskSize - 10;
+            // Calculate position avoiding edges and other tasks
+            let x, y;
+            let attempts = 0;
+            const maxAttempts = 20;
             
-            const x = Math.floor(Math.random() * maxX) + 5;
-            const y = Math.floor(Math.random() * maxY) + 5;
+            do {
+                x = Math.floor(Math.random() * (gameAreaRect.width - taskSize - padding * 2)) + padding;
+                y = Math.floor(Math.random() * (gameAreaRect.height - taskSize - padding * 2)) + padding;
+                attempts++;
+            } while (isOverlapping(x, y, taskSize) && attempts < maxAttempts);
             
-            // Create task element
+            if (attempts >= maxAttempts) {
+                console.warn('Could not find non-overlapping position');
+                return;
+            }
+            
+            // Create task with unique ID
+            const taskId = `task_${gameState.taskIds++}`;
             const task = document.createElement('div');
             task.className = 'task';
+            task.id = taskId;
             task.style.left = `${x}px`;
             task.style.top = `${y}px`;
-            task.textContent = Math.floor(Math.random() * 9) + 1; // Random number 1-9
+            task.textContent = Math.floor(Math.random() * 9) + 1;
+            task.dataset.created = Date.now();
             
-            // Add click handler
-            task.addEventListener('click', function() {
-                completeTask(this);
-            });
+            // Add touch/click handler
+            const handleComplete = () => completeTask(taskId);
+            task.addEventListener('click', handleComplete);
+            task.addEventListener('touchstart', handleComplete, { passive: true });
             
-            // Add to game area
-            gameArea.appendChild(task);
-            gameState.tasks.push(task);
+            dom.gameArea.appendChild(task);
+            gameState.tasks.push({ element: task, id: taskId, timeout: null });
             
-            // Remove task after time expires
-            setTimeout(() => {
-                if (task.parentNode && !task.classList.contains('completed')) {
-                    task.classList.add('failed');
-                    setTimeout(() => {
-                        if (task.parentNode) {
-                            gameArea.removeChild(task);
-                            const index = gameState.tasks.indexOf(task);
-                            if (index > -1) {
-                                gameState.tasks.splice(index, 1);
+            // Set removal timeout
+            const timeoutId = setTimeout(() => {
+                const taskIndex = gameState.tasks.findIndex(t => t.id === taskId);
+                if (taskIndex > -1) {
+                    const taskObj = gameState.tasks[taskIndex];
+                    if (taskObj.element.parentNode && !taskObj.element.classList.contains('completed')) {
+                        taskObj.element.classList.add('failed');
+                        
+                        setTimeout(() => {
+                            if (taskObj.element.parentNode) {
+                                dom.gameArea.removeChild(taskObj.element);
+                                gameState.tasks.splice(taskIndex, 1);
+                                loseLife();
                             }
-                            
-                            // Lose a life for missed task
-                            loseLife();
-                        }
-                    }, 300);
+                        }, gameState.performanceMode ? 0 : 300);
+                    }
+                    gameState.tasks.splice(taskIndex, 1);
                 }
             }, gameState.taskSpeed);
+            
+            // Store timeout ID for cleanup
+            const taskIndex = gameState.tasks.findIndex(t => t.id === taskId);
+            if (taskIndex > -1) {
+                gameState.tasks[taskIndex].timeout = timeoutId;
+            }
         }
         
-        function completeTask(taskElement) {
+        function isOverlapping(x, y, size) {
+            const padding = 5;
+            for (const task of gameState.tasks) {
+                const rect = task.element.getBoundingClientRect();
+                const gameAreaRect = dom.gameArea.getBoundingClientRect();
+                
+                const taskX = rect.left - gameAreaRect.left;
+                const taskY = rect.top - gameAreaRect.top;
+                
+                if (!(x + size + padding < taskX || 
+                      x > taskX + size + padding || 
+                      y + size + padding < taskY || 
+                      y > taskY + size + padding)) {
+                    return true;
+                }
+            }
+            return false;
+        }
+        
+        function completeTask(taskId) {
+            if (gameState.gamePaused) return;
+            
+            const taskIndex = gameState.tasks.findIndex(t => t.id === taskId);
+            if (taskIndex === -1) return;
+            
+            const taskObj = gameState.tasks[taskIndex];
+            const taskElement = taskObj.element;
+            
             if (taskElement.classList.contains('completed') || 
-                taskElement.classList.contains('failed') ||
-                gameState.gamePaused) return;
+                taskElement.classList.contains('failed')) return;
+            
+            // Clear the removal timeout
+            if (taskObj.timeout) {
+                clearTimeout(taskObj.timeout);
+            }
             
             // Mark as completed
             taskElement.classList.add('completed');
@@ -920,46 +1343,44 @@
             // Remove task after animation
             setTimeout(() => {
                 if (taskElement.parentNode) {
-                    gameArea.removeChild(taskElement);
-                    const index = gameState.tasks.indexOf(taskElement);
-                    if (index > -1) {
-                        gameState.tasks.splice(index, 1);
-                    }
+                    dom.gameArea.removeChild(taskElement);
+                    gameState.tasks.splice(taskIndex, 1);
                 }
-            }, 500);
+            }, gameState.performanceMode ? 0 : 500);
             
-            // Play sound if enabled
-            if (settings.sound === 'on') {
-                playSound('click');
-            }
+            // Play sound
+            playSound('click');
         }
         
         function completeLevel() {
-            // Calculate time bonus
+            // Calculate bonuses
             const timeBonus = Math.floor(gameState.timeRemaining) * gameState.level;
-            gameState.score += timeBonus + (100 * gameState.level);
+            const levelBonus = 100 * gameState.level;
+            gameState.score += timeBonus + levelBonus;
             
-            // Advance to next level
+            // Advance level
             gameState.level++;
             gameState.tasksCompleted = 0;
             
-            // Update difficulty for new level
+            // Update difficulty
             updateDifficultySettings();
             
             // Clear existing tasks
-            gameArea.innerHTML = '';
-            gameState.tasks = [];
+            clearGameArea();
             
             // Update displays
             updateDisplays();
             
-            // Show level up message
-            showMessage(`Level ${gameState.level - 1} Complete! Bonus: ${timeBonus + (100 * (gameState.level - 1))} points`);
-            
-            // Play sound if enabled
-            if (settings.sound === 'on') {
-                playSound('levelup');
+            // Show level up animation
+            if (!gameState.performanceMode) {
+                dom.levelUpAnim.style.display = 'block';
+                setTimeout(() => {
+                    dom.levelUpAnim.style.display = 'none';
+                }, 1000);
             }
+            
+            showNotification(`Level Complete! +${timeBonus + levelBonus} points`, 'success');
+            playSound('levelup');
         }
         
         function loseLife() {
@@ -969,142 +1390,196 @@
             if (gameState.lives <= 0) {
                 gameOver();
             } else {
-                showMessage('Task missed! Lives remaining: ' + gameState.lives);
-                
-                // Play sound if enabled
-                if (settings.sound === 'on') {
-                    playSound('error');
-                }
+                showNotification(`Task missed! ${gameState.lives} ${gameState.lives === 1 ? 'life' : 'lives'} remaining`, 'error');
+                playSound('error');
             }
         }
         
         function gameOver() {
             gameState.gameActive = false;
+            gameState.gamePaused = false;
             
             // Clear intervals
-            clearInterval(gameState.gameLoopInterval);
-            clearInterval(gameState.timeInterval);
+            clearAllTimeouts();
+            
+            // Calculate play time
+            const playTime = gameState.gameStartTime ? Math.floor((Date.now() - gameState.gameStartTime) / 1000) : 0;
             
             // Update final score display
-            finalScoreDisplay.textContent = gameState.score;
-            finalLevelDisplay.textContent = gameState.level;
+            dom.finalScoreDisplay.textContent = gameState.score;
+            dom.finalLevelDisplay.textContent = gameState.level;
+            
+            // Auto-fill player name if available
+            const savedName = localStorage.getItem('playerName');
+            if (savedName) {
+                dom.playerNameInput.value = savedName;
+            }
             
             // Show game over screen
             showWindow('game-over');
             
-            // Play sound if enabled
-            if (settings.sound === 'on') {
-                playSound('gameover');
-            }
+            // Play sound
+            playSound('gameover');
+            
+            console.log(`Game over - Score: ${gameState.score}, Level: ${gameState.level}, Time: ${playTime}s`);
         }
         
         function pauseGame() {
             if (!gameState.gameActive) return;
             
             gameState.gamePaused = !gameState.gamePaused;
-            const pauseBtn = document.getElementById('pause-btn');
             
             if (gameState.gamePaused) {
-                pauseBtn.textContent = 'Resume';
-                showMessage('Game Paused');
+                dom.pauseBtn.textContent = 'Resume';
+                showNotification('Game Paused', 'info');
             } else {
-                pauseBtn.textContent = 'Pause';
-                showMessage('Game Resumed');
+                dom.pauseBtn.textContent = 'Pause';
+                showNotification('Game Resumed', 'info');
             }
         }
         
         function updateDisplays() {
-            scoreDisplay.textContent = gameState.score;
-            levelDisplay.textContent = gameState.level;
-            levelDisplayMain.textContent = gameState.level;
-            livesDisplay.textContent = gameState.lives;
-            tasksCompletedDisplay.textContent = gameState.tasksCompleted;
-            tasksTotalDisplay.textContent = Math.floor(gameState.tasksTotal);
+            dom.scoreDisplay.textContent = gameState.score;
+            dom.levelDisplay.textContent = gameState.level;
+            dom.levelDisplayMain.textContent = gameState.level;
+            dom.livesDisplay.textContent = gameState.lives;
+            dom.tasksCompletedDisplay.textContent = gameState.tasksCompleted;
+            dom.tasksTotalDisplay.textContent = gameState.tasksTotal;
             updateTimeProgress();
         }
         
         function updateTimeProgress() {
             const percent = (gameState.timeRemaining / gameState.maxTime) * 100;
-            timeProgress.style.width = `${percent}%`;
+            dom.timeProgress.style.width = `${percent}%`;
             
-            // Change color based on time remaining
-            if (percent < 25) {
-                timeProgress.style.backgroundColor = '#c00000';
-            } else if (percent < 50) {
-                timeProgress.style.backgroundColor = '#c0c000';
+            // Color coding
+            if (percent < 20) {
+                dom.timeProgress.style.backgroundColor = '#ff0000';
+            } else if (percent < 40) {
+                dom.timeProgress.style.backgroundColor = '#ff8000';
+            } else if (percent < 60) {
+                dom.timeProgress.style.backgroundColor = '#ffff00';
             } else {
-                timeProgress.style.backgroundColor = '#000080';
+                dom.timeProgress.style.backgroundColor = '#000080';
             }
         }
         
-        function showMessage(text) {
-            // Create message element
-            const message = document.createElement('div');
-            message.textContent = text;
-            message.style.position = 'absolute';
-            message.style.top = '50%';
-            message.style.left = '50%';
-            message.style.transform = 'translate(-50%, -50%)';
-            message.style.backgroundColor = 'rgba(0, 0, 0, 0.8)';
-            message.style.color = 'white';
-            message.style.padding = '10px 20px';
-            message.style.borderRadius = '5px';
-            message.style.zIndex = '1000';
-            message.style.fontWeight = 'bold';
-            message.style.textAlign = 'center';
+        // Notification system
+        function showNotification(message, type = 'info') {
+            const colors = {
+                info: '#000080',
+                success: '#00c000',
+                warning: '#c0c000',
+                error: '#c00000'
+            };
             
-            // Add to game area
-            gameArea.appendChild(message);
+            dom.notification.textContent = message;
+            dom.notification.style.backgroundColor = colors[type] || colors.info;
+            dom.notification.classList.add('show');
             
-            // Remove after delay
             setTimeout(() => {
-                if (message.parentNode) {
-                    gameArea.removeChild(message);
+                dom.notification.classList.remove('show');
+            }, 3000);
+        }
+        
+        // Sound system
+        function playSound(type) {
+            if (!audioEnabled || settings.sound !== 'on') return;
+            
+            try {
+                if (!audioContext) {
+                    audioContext = new (window.AudioContext || window.webkitAudioContext)();
                 }
-            }, 1500);
+                
+                const oscillator = audioContext.createOscillator();
+                const gainNode = audioContext.createGain();
+                
+                oscillator.connect(gainNode);
+                gainNode.connect(audioContext.destination);
+                
+                switch(type) {
+                    case 'click':
+                        oscillator.frequency.value = 800;
+                        oscillator.type = 'sine';
+                        gainNode.gain.setValueAtTime(0.2, audioContext.currentTime);
+                        gainNode.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime + 0.1);
+                        oscillator.start();
+                        oscillator.stop(audioContext.currentTime + 0.1);
+                        break;
+                        
+                    case 'error':
+                        oscillator.frequency.value = 300;
+                        oscillator.type = 'sawtooth';
+                        gainNode.gain.setValueAtTime(0.3, audioContext.currentTime);
+                        gainNode.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime + 0.3);
+                        oscillator.start();
+                        oscillator.stop(audioContext.currentTime + 0.3);
+                        break;
+                        
+                    case 'levelup':
+                        oscillator.frequency.setValueAtTime(523.25, audioContext.currentTime); // C5
+                        oscillator.frequency.setValueAtTime(659.25, audioContext.currentTime + 0.1); // E5
+                        oscillator.frequency.setValueAtTime(783.99, audioContext.currentTime + 0.2); // G5
+                        oscillator.type = 'sine';
+                        gainNode.gain.setValueAtTime(0.3, audioContext.currentTime);
+                        gainNode.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime + 0.5);
+                        oscillator.start();
+                        oscillator.stop(audioContext.currentTime + 0.5);
+                        break;
+                        
+                    case 'gameover':
+                        oscillator.frequency.setValueAtTime(392.00, audioContext.currentTime); // G4
+                        oscillator.frequency.setValueAtTime(311.13, audioContext.currentTime + 0.2); // D#4
+                        oscillator.frequency.setValueAtTime(261.63, audioContext.currentTime + 0.4); // C4
+                        oscillator.type = 'sawtooth';
+                        gainNode.gain.setValueAtTime(0.4, audioContext.currentTime);
+                        gainNode.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime + 0.8);
+                        oscillator.start();
+                        oscillator.stop(audioContext.currentTime + 0.8);
+                        break;
+                }
+            } catch (e) {
+                console.log('Sound error:', e);
+            }
         }
         
         // High Scores Functions
         function saveScore() {
-            const playerName = document.getElementById('player-name').value.trim() || 'Anonymous';
-            const playerScore = gameState.score;
-            const playerLevel = gameState.level;
+            const playerName = dom.playerNameInput.value.trim() || 'Anonymous';
+            if (playerName) {
+                localStorage.setItem('playerName', playerName);
+            }
             
-            // Create score object
             const scoreObj = {
                 name: playerName.substring(0, 20),
-                score: playerScore,
-                level: playerLevel,
-                date: new Date().toLocaleDateString()
+                score: gameState.score,
+                level: gameState.level,
+                date: new Date().toLocaleDateString(),
+                time: new Date().toISOString()
             };
             
-            // Add to high scores
             highScores.push(scoreObj);
-            
-            // Sort by score (descending)
-            highScores.sort((a, b) => b.score - a.score);
-            
-            // Keep only top 10 scores
+            highScores.sort((a, b) => b.score - a.score || new Date(b.time) - new Date(a.time));
             highScores = highScores.slice(0, 10);
             
-            // Save to localStorage
             localStorage.setItem('productivityHighScores', JSON.stringify(highScores));
-            
-            // Reload high scores display
             loadHighScores();
             
-            // Show confirmation
-            alert(`Score saved! You ranked #${highScores.findIndex(s => s.score === playerScore) + 1}`);
+            const rank = highScores.findIndex(s => s.score === gameState.score && s.name === playerName) + 1;
+            showNotification(`Score saved! Rank: #${rank}`, 'success');
             
-            // Return to main menu
             showWindow('main-menu');
         }
         
         function loadHighScores() {
-            highScoresBody.innerHTML = '';
+            const saved = localStorage.getItem('productivityHighScores');
+            highScores = saved ? JSON.parse(saved) : [];
+            
+            dom.highScoresBody.innerHTML = '';
             
             if (highScores.length === 0) {
-                highScoresBody.innerHTML = '<tr><td colspan="5" style="text-align: center;">No scores yet. Be the first!</td></tr>';
+                dom.highScoresBody.innerHTML = 
+                    '<tr><td colspan="5" style="text-align: center; padding: 20px;">No scores yet. Be the first!</td></tr>';
                 return;
             }
             
@@ -1112,103 +1587,106 @@
                 const row = document.createElement('tr');
                 row.innerHTML = `
                     <td>${index + 1}</td>
-                    <td>${score.name}</td>
-                    <td>${score.score}</td>
+                    <td>${escapeHtml(score.name)}</td>
+                    <td>${score.score.toLocaleString()}</td>
                     <td>${score.level}</td>
                     <td>${score.date}</td>
                 `;
-                highScoresBody.appendChild(row);
+                dom.highScoresBody.appendChild(row);
             });
         }
         
         function clearScores() {
-            if (confirm('Are you sure you want to clear all high scores?')) {
+            if (confirm('Are you sure you want to clear all high scores? This cannot be undone.')) {
                 highScores = [];
                 localStorage.removeItem('productivityHighScores');
                 loadHighScores();
+                showNotification('High scores cleared', 'info');
             }
+        }
+        
+        function updateBestScoreDisplay() {
+            const bestScore = highScores.length > 0 ? Math.max(...highScores.map(s => s.score)) : 0;
+            dom.bestScoreDisplay.textContent = bestScore.toLocaleString();
         }
         
         // Settings Functions
         function loadSettings() {
-            difficultySelect.value = settings.difficulty;
-            soundSelect.value = settings.sound;
-            themeSelect.value = settings.theme;
+            const saved = localStorage.getItem('gameSettings');
+            settings = saved ? JSON.parse(saved) : {
+                difficulty: 'normal',
+                sound: 'on',
+                theme: 'windows95',
+                performanceMode: false
+            };
+            
+            dom.difficultySelect.value = settings.difficulty;
+            dom.soundSelect.value = settings.sound;
+            dom.themeSelect.value = settings.theme;
+            dom.performanceModeCheckbox.checked = settings.performanceMode || false;
+            gameState.performanceMode = settings.performanceMode || false;
         }
         
         function saveSettings() {
-            settings.difficulty = difficultySelect.value;
-            settings.sound = soundSelect.value;
-            settings.theme = themeSelect.value;
+            settings.difficulty = dom.difficultySelect.value;
+            settings.sound = dom.soundSelect.value;
+            settings.theme = dom.themeSelect.value;
+            settings.performanceMode = dom.performanceModeCheckbox.checked;
+            gameState.performanceMode = settings.performanceMode;
             
             localStorage.setItem('gameSettings', JSON.stringify(settings));
             
-            // Apply theme if game is active
-            applyTheme();
+            // Update audio
+            audioEnabled = settings.sound === 'on';
+            if (audioEnabled && !audioContext) {
+                initAudio();
+            }
             
-            showMessage('Settings saved!');
+            showNotification('Settings saved successfully', 'success');
             setTimeout(() => showWindow('main-menu'), 1000);
         }
         
-        function applyTheme() {
-            // This would apply different visual themes
-            // For now, we just store the preference
-            console.log('Theme set to:', settings.theme);
-        }
-        
-        // Sound Functions
-        function playSound(type) {
-            // Create audio context for simple sound effects
-            try {
-                const audioContext = new (window.AudioContext || window.webkitAudioContext)();
-                
-                if (type === 'click') {
-                    // Click sound
-                    const oscillator = audioContext.createOscillator();
-                    const gainNode = audioContext.createGain();
-                    
-                    oscillator.connect(gainNode);
-                    gainNode.connect(audioContext.destination);
-                    
-                    oscillator.frequency.value = 800;
-                    oscillator.type = 'sine';
-                    
-                    gainNode.gain.setValueAtTime(0.3, audioContext.currentTime);
-                    gainNode.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime + 0.1);
-                    
-                    oscillator.start(audioContext.currentTime);
-                    oscillator.stop(audioContext.currentTime + 0.1);
-                } else if (type === 'error') {
-                    // Error sound
-                    const oscillator = audioContext.createOscillator();
-                    const gainNode = audioContext.createGain();
-                    
-                    oscillator.connect(gainNode);
-                    gainNode.connect(audioContext.destination);
-                    
-                    oscillator.frequency.value = 300;
-                    oscillator.type = 'sawtooth';
-                    
-                    gainNode.gain.setValueAtTime(0.3, audioContext.currentTime);
-                    gainNode.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime + 0.3);
-                    
-                    oscillator.start(audioContext.currentTime);
-                    oscillator.stop(audioContext.currentTime + 0.3);
-                }
-            } catch (e) {
-                console.log('Audio not supported or disabled');
+        function resetToDefaults() {
+            if (confirm('Reset all settings to defaults?')) {
+                localStorage.removeItem('gameSettings');
+                loadSettings();
+                showNotification('Settings reset to defaults', 'info');
             }
         }
         
         // Utility Functions
         function resizeGameArea() {
-            // Make sure game area fits mobile screens
             const windowHeight = window.innerHeight;
-            const maxHeight = windowHeight * 0.5; // 50% of screen height
+            const maxHeight = Math.min(300, windowHeight * 0.45);
             
-            if (gameArea) {
-                gameArea.style.height = `${Math.min(300, maxHeight)}px`;
+            if (dom.gameArea) {
+                dom.gameArea.style.height = `${maxHeight}px`;
             }
+        }
+        
+        function debounce(func, wait) {
+            let timeout;
+            return function executedFunction(...args) {
+                const later = () => {
+                    clearTimeout(timeout);
+                    func(...args);
+                };
+                clearTimeout(timeout);
+                timeout = setTimeout(later, wait);
+            };
+        }
+        
+        function escapeHtml(text) {
+            const div = document.createElement('div');
+            div.textContent = text;
+            return div.innerHTML;
+        }
+        
+        // Initialize game when DOM is loaded
+        if (document.readyState === 'loading') {
+            document.addEventListener('DOMContentLoaded', init);
+        } else {
+            init();
         }
     </script>
 </body>
