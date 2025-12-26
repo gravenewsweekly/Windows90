@@ -1,0 +1,1219 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Windows 90s Productivity Challenge</title>
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>📟</text></svg>">
+    <style>
+        /* Microsoft Windows 1990s Theme */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: "MS Sans Serif", "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+            -webkit-tap-highlight-color: transparent;
+        }
+        
+        body {
+            background-color: #008080;
+            color: #000;
+            min-height: 100vh;
+            overflow-x: hidden;
+            padding: 10px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        /* Main Container - Windows 95 Window Style */
+        .window {
+            width: 95%;
+            max-width: 500px;
+            background-color: #c0c0c0;
+            border: 2px solid;
+            border-color: #dfdfdf #000 #000 #dfdfdf;
+            box-shadow: 3px 3px 10px rgba(0, 0, 0, 0.3);
+            margin: 10px auto;
+            display: none;
+        }
+        
+        .window.active {
+            display: block;
+        }
+        
+        /* Window Title Bar */
+        .title-bar {
+            background: linear-gradient(90deg, #000080, #1084d0);
+            color: white;
+            padding: 4px 8px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-weight: bold;
+            font-size: 14px;
+            height: 30px;
+        }
+        
+        .title-bar-controls {
+            display: flex;
+            gap: 4px;
+        }
+        
+        .title-bar-button {
+            width: 20px;
+            height: 18px;
+            background-color: #c0c0c0;
+            border: 1px solid;
+            border-color: #dfdfdf #000 #000 #dfdfdf;
+            font-size: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+        }
+        
+        /* Window Content */
+        .window-body {
+            padding: 15px;
+            min-height: 300px;
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+        
+        /* Menu Bar */
+        .menu-bar {
+            display: flex;
+            background-color: #c0c0c0;
+            border-bottom: 1px solid #808080;
+            font-size: 13px;
+        }
+        
+        .menu-item {
+            padding: 4px 12px;
+            cursor: pointer;
+            border: 1px solid transparent;
+        }
+        
+        .menu-item:hover {
+            border-color: #dfdfdf #000 #000 #dfdfdf;
+        }
+        
+        /* Game Elements */
+        .game-container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            gap: 20px;
+            padding: 15px 0;
+        }
+        
+        .stats-bar {
+            display: flex;
+            justify-content: space-between;
+            width: 100%;
+            background-color: #c0c0c0;
+            padding: 8px 12px;
+            border: 2px inset;
+            font-size: 14px;
+        }
+        
+        .game-area {
+            width: 100%;
+            height: 300px;
+            background-color: #000;
+            border: 4px inset #808080;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .task {
+            position: absolute;
+            width: 60px;
+            height: 60px;
+            background-color: #008080;
+            border: 3px outset #00c0c0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: bold;
+            cursor: pointer;
+            user-select: none;
+            transition: transform 0.1s;
+        }
+        
+        .task:hover, .task:active {
+            transform: scale(1.05);
+        }
+        
+        .task.completed {
+            background-color: #00c000;
+            border-color: #00ff00;
+        }
+        
+        .task.failed {
+            background-color: #c00000;
+            border-color: #ff0000;
+        }
+        
+        .progress-bar {
+            width: 100%;
+            height: 20px;
+            background-color: #808080;
+            border: 2px inset;
+            overflow: hidden;
+        }
+        
+        .progress-fill {
+            height: 100%;
+            background-color: #000080;
+            width: 0%;
+            transition: width 0.3s;
+        }
+        
+        /* Buttons in Windows 95 Style */
+        button {
+            background-color: #c0c0c0;
+            border: 2px solid;
+            border-color: #dfdfdf #000 #000 #dfdfdf;
+            padding: 6px 20px;
+            font-weight: bold;
+            cursor: pointer;
+            font-size: 14px;
+            min-height: 28px;
+            min-width: 80px;
+        }
+        
+        button:active {
+            border-color: #000 #dfdfdf #dfdfdf #000;
+        }
+        
+        button.primary {
+            background-color: #000080;
+            color: white;
+        }
+        
+        /* Form Elements */
+        input, textarea {
+            background-color: white;
+            border: 2px inset #808080;
+            padding: 6px;
+            font-size: 14px;
+            width: 100%;
+        }
+        
+        /* Content Pages */
+        .content-page {
+            padding: 15px;
+            background-color: #fff;
+            border: 2px inset #808080;
+            height: 300px;
+            overflow-y: auto;
+            font-size: 14px;
+            line-height: 1.5;
+        }
+        
+        .content-page h2 {
+            color: #000080;
+            margin-bottom: 10px;
+            font-size: 18px;
+            border-bottom: 1px solid #c0c0c0;
+            padding-bottom: 5px;
+        }
+        
+        .content-page p {
+            margin-bottom: 12px;
+        }
+        
+        .content-page ul, .content-page ol {
+            margin-left: 20px;
+            margin-bottom: 12px;
+        }
+        
+        /* Game Over Screen */
+        .game-over {
+            text-align: center;
+            padding: 30px 20px;
+        }
+        
+        .game-over h2 {
+            color: #c00000;
+            font-size: 24px;
+            margin-bottom: 15px;
+        }
+        
+        .score-display {
+            font-size: 36px;
+            font-weight: bold;
+            color: #000080;
+            margin: 15px 0;
+        }
+        
+        /* Footer */
+        .footer {
+            margin-top: 20px;
+            color: white;
+            text-align: center;
+            font-size: 12px;
+            padding: 10px;
+        }
+        
+        /* Mobile Optimizations */
+        @media (max-width: 768px) {
+            body {
+                padding: 5px;
+            }
+            
+            .window {
+                width: 100%;
+                margin: 5px auto;
+            }
+            
+            .game-area {
+                height: 250px;
+            }
+            
+            .task {
+                width: 50px;
+                height: 50px;
+                font-size: 12px;
+            }
+            
+            button {
+                min-width: 70px;
+                padding: 8px 15px;
+            }
+        }
+        
+        /* High Score Table */
+        .high-scores {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 15px;
+        }
+        
+        .high-scores th {
+            background-color: #000080;
+            color: white;
+            padding: 8px;
+            text-align: left;
+        }
+        
+        .high-scores td {
+            padding: 8px;
+            border-bottom: 1px solid #c0c0c0;
+        }
+        
+        .high-scores tr:nth-child(even) {
+            background-color: #e0e0e0;
+        }
+        
+        /* Instructions */
+        .instructions {
+            font-size: 13px;
+            line-height: 1.4;
+            margin-bottom: 15px;
+        }
+        
+        /* Hidden Class */
+        .hidden {
+            display: none;
+        }
+        
+        /* Game Controls */
+        .controls {
+            display: flex;
+            gap: 10px;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+    </style>
+</head>
+<body>
+    <!-- Main Menu Window -->
+    <div id="main-menu" class="window active">
+        <div class="title-bar">
+            <div class="title-bar-text">📟 Windows 90s Productivity Challenge</div>
+            <div class="title-bar-controls">
+                <button class="title-bar-button" aria-label="Minimize">_</button>
+                <button class="title-bar-button" aria-label="Maximize">□</button>
+                <button class="title-bar-button" aria-label="Close">×</button>
+            </div>
+        </div>
+        
+        <div class="menu-bar">
+            <div class="menu-item" onclick="showWindow('game')">Game</div>
+            <div class="menu-item" onclick="showWindow('high-scores')">High Scores</div>
+            <div class="menu-item" onclick="showWindow('about')">About</div>
+            <div class="menu-item" onclick="showWindow('legal')">Legal</div>
+        </div>
+        
+        <div class="window-body">
+            <div class="game-container">
+                <h1 style="color: #000080; text-align: center;">Windows 90s Productivity Challenge</h1>
+                <div style="text-align: center; margin: 20px 0;">
+                    <div style="font-size: 60px; color: #008080;">📟</div>
+                    <p style="margin: 15px 0; font-size: 16px;">Complete tasks before they expire! Each level gets harder!</p>
+                </div>
+                
+                <div class="instructions">
+                    <p><strong>How to play:</strong></p>
+                    <p>1. Click on tasks before they disappear</p>
+                    <p>2. Complete tasks to earn points</p>
+                    <p>3. Each level has more tasks and less time</p>
+                    <p>4. Miss 3 tasks and the game ends</p>
+                </div>
+                
+                <div style="display: flex; flex-direction: column; gap: 15px; width: 100%;">
+                    <button class="primary" onclick="startGame()">Start Game</button>
+                    <button onclick="showWindow('instructions')">How to Play</button>
+                    <button onclick="showWindow('high-scores')">View High Scores</button>
+                    <button onclick="showWindow('settings')">Settings</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Game Window -->
+    <div id="game" class="window">
+        <div class="title-bar">
+            <div class="title-bar-text">Game - Level <span id="level-display">1</span></div>
+            <div class="title-bar-controls">
+                <button class="title-bar-button" onclick="showWindow('main-menu')">×</button>
+            </div>
+        </div>
+        
+        <div class="window-body">
+            <div class="stats-bar">
+                <div>Score: <span id="score">0</span></div>
+                <div>Level: <span id="level">1</span></div>
+                <div>Lives: <span id="lives">3</span></div>
+                <div>Tasks: <span id="tasks-completed">0</span>/<span id="tasks-total">5</span></div>
+            </div>
+            
+            <div class="progress-bar">
+                <div id="time-progress" class="progress-fill" style="width: 100%"></div>
+            </div>
+            
+            <div id="game-area" class="game-area">
+                <!-- Tasks will be generated here -->
+            </div>
+            
+            <div class="controls">
+                <button onclick="pauseGame()" id="pause-btn">Pause</button>
+                <button onclick="showWindow('main-menu')">Main Menu</button>
+                <button onclick="resetGame()">Restart</button>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Game Over Window -->
+    <div id="game-over" class="window">
+        <div class="title-bar">
+            <div class="title-bar-text">Game Over</div>
+            <div class="title-bar-controls">
+                <button class="title-bar-button" onclick="showWindow('main-menu')">×</button>
+            </div>
+        </div>
+        
+        <div class="window-body">
+            <div class="game-over">
+                <h2>GAME OVER</h2>
+                <div style="font-size: 60px; color: #c00000;">💀</div>
+                <p>Your productivity has crashed!</p>
+                
+                <div class="score-display">
+                    Score: <span id="final-score">0</span>
+                </div>
+                
+                <p>Level reached: <span id="final-level">1</span></p>
+                
+                <div style="margin: 20px 0;">
+                    <input type="text" id="player-name" placeholder="Enter your name" maxlength="20" style="margin-bottom: 15px;">
+                    <div class="controls">
+                        <button class="primary" onclick="saveScore()">Save Score</button>
+                        <button onclick="startGame()">Play Again</button>
+                        <button onclick="showWindow('main-menu')">Main Menu</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- High Scores Window -->
+    <div id="high-scores" class="window">
+        <div class="title-bar">
+            <div class="title-bar-text">High Scores</div>
+            <div class="title-bar-controls">
+                <button class="title-bar-button" onclick="showWindow('main-menu')">×</button>
+            </div>
+        </div>
+        
+        <div class="window-body">
+            <div class="content-page">
+                <h2>Productivity Hall of Fame</h2>
+                <table class="high-scores">
+                    <thead>
+                        <tr>
+                            <th>Rank</th>
+                            <th>Name</th>
+                            <th>Score</th>
+                            <th>Level</th>
+                            <th>Date</th>
+                        </tr>
+                    </thead>
+                    <tbody id="high-scores-body">
+                        <!-- High scores will be loaded here -->
+                    </tbody>
+                </table>
+                
+                <div style="margin-top: 20px; text-align: center;">
+                    <button onclick="clearScores()">Clear Scores</button>
+                    <button onclick="showWindow('main-menu')">Back to Menu</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Instructions Window -->
+    <div id="instructions" class="window">
+        <div class="title-bar">
+            <div class="title-bar-text">How to Play</div>
+            <div class="title-bar-controls">
+                <button class="title-bar-button" onclick="showWindow('main-menu')">×</button>
+            </div>
+        </div>
+        
+        <div class="window-body">
+            <div class="content-page">
+                <h2>Windows 90s Productivity Challenge</h2>
+                <p>Welcome to the ultimate productivity test from the 1990s!</p>
+                
+                <h3>Game Objective</h3>
+                <p>Complete as many tasks as possible before they expire. Each level increases in difficulty with more tasks and less time.</p>
+                
+                <h3>Gameplay</h3>
+                <ol>
+                    <li>Tasks appear as colored boxes in the game area</li>
+                    <li>Click on tasks before they disappear</li>
+                    <li>Each completed task gives you points</li>
+                    <li>Each missed task costs you one life</li>
+                    <li>Complete all tasks in a level to advance</li>
+                </ol>
+                
+                <h3>Scoring</h3>
+                <ul>
+                    <li>Each task: 10 points × level</li>
+                    <li>Time bonus: remaining seconds × level</li>
+                    <li>Level completion: 100 points × level</li>
+                </ul>
+                
+                <h3>Difficulty</h3>
+                <p>The game gets progressively harder:
+                <br>• More tasks per level
+                <br>• Less time to complete tasks
+                <br>• Tasks appear for shorter durations</p>
+                
+                <div style="text-align: center; margin-top: 20px;">
+                    <button class="primary" onclick="startGame()">Start Playing</button>
+                    <button onclick="showWindow('main-menu')">Back to Menu</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Settings Window -->
+    <div id="settings" class="window">
+        <div class="title-bar">
+            <div class="title-bar-text">Settings</div>
+            <div class="title-bar-controls">
+                <button class="title-bar-button" onclick="showWindow('main-menu')">×</button>
+            </div>
+        </div>
+        
+        <div class="window-body">
+            <div class="content-page">
+                <h2>Game Settings</h2>
+                
+                <div style="margin-bottom: 15px;">
+                    <label for="difficulty">Difficulty:</label>
+                    <select id="difficulty" style="width: 100%; margin-top: 5px;">
+                        <option value="easy">Easy (Recommended for beginners)</option>
+                        <option value="normal" selected>Normal (Balanced challenge)</option>
+                        <option value="hard">Hard (For productivity experts)</option>
+                        <option value="insane">Insane (Nearly impossible)</option>
+                    </select>
+                </div>
+                
+                <div style="margin-bottom: 15px;">
+                    <label for="sound">Sound Effects:</label>
+                    <select id="sound" style="width: 100%; margin-top: 5px;">
+                        <option value="on" selected>On</option>
+                        <option value="off">Off</option>
+                    </select>
+                </div>
+                
+                <div style="margin-bottom: 15px;">
+                    <label for="theme">Visual Theme:</label>
+                    <select id="theme" style="width: 100%; margin-top: 5px;">
+                        <option value="windows95" selected>Windows 95</option>
+                        <option value="windows31">Windows 3.1</option>
+                        <option value="classic">Classic Monochrome</option>
+                    </select>
+                </div>
+                
+                <div style="text-align: center; margin-top: 20px;">
+                    <button class="primary" onclick="saveSettings()">Save Settings</button>
+                    <button onclick="showWindow('main-menu')">Cancel</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- About Window -->
+    <div id="about" class="window">
+        <div class="title-bar">
+            <div class="title-bar-text">About</div>
+            <div class="title-bar-controls">
+                <button class="title-bar-button" onclick="showWindow('main-menu')">×</button>
+            </div>
+        </div>
+        
+        <div class="window-body">
+            <div class="content-page">
+                <h2>About Windows 90s Productivity Challenge</h2>
+                <p>This game is a tribute to the classic Microsoft Windows experience of the 1990s, reimagined as a challenging productivity game.</p>
+                
+                <h3>Game Concept</h3>
+                <p>Experience the thrill of managing multiple tasks before deadlines, just like in a real 1990s office environment. The game tests your reflexes, focus, and ability to handle increasing pressure.</p>
+                
+                <h3>Development</h3>
+                <p>Created with pure HTML, CSS, and JavaScript using the classic Microsoft Windows 95/98 visual style. Designed to be fully responsive and mobile-friendly.</p>
+                
+                <h3>Version</h3>
+                <p>Version 1.0.0 (Release 2023)</p>
+                
+                <div style="text-align: center; margin-top: 20px;">
+                    <button onclick="showWindow('main-menu')">Back to Menu</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Legal Window (TOS, Privacy, etc.) -->
+    <div id="legal" class="window">
+        <div class="title-bar">
+            <div class="title-bar-text">Legal Information</div>
+            <div class="title-bar-controls">
+                <button class="title-bar-button" onclick="showWindow('main-menu')">×</button>
+            </div>
+        </div>
+        
+        <div class="window-body">
+            <div class="content-page">
+                <h2>Terms of Service</h2>
+                <p>By using this application, you agree to the following terms:</p>
+                <ul>
+                    <li>This is a free game for entertainment purposes</li>
+                    <li>No personal data is collected or stored</li>
+                    <li>High scores are stored locally on your device</li>
+                    <li>You may not modify, distribute, or sell this game without permission</li>
+                </ul>
+                
+                <h2>Privacy Policy</h2>
+                <p>We respect your privacy:</p>
+                <ul>
+                    <li>No personal information is collected</li>
+                    <li>No tracking cookies are used</li>
+                    <li>Game data is stored locally on your device</li>
+                    <li>We do not share any data with third parties</li>
+                </ul>
+                
+                <h2>About Company</h2>
+                <p>This application is developed by RetroSoft Games, a virtual company specializing in nostalgic gaming experiences.</p>
+                
+                <h2>Contact</h2>
+                <p>For questions or feedback, please email:</p>
+                <p style="font-weight: bold; color: #000080;">support@retrosoftgames.example.com</p>
+                <p><em>Note: This is a demo application. The email address is for display purposes only.</em></p>
+                
+                <div style="text-align: center; margin-top: 20px;">
+                    <button onclick="showWindow('main-menu')">Back to Menu</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Footer -->
+    <div class="footer">
+        <p>Windows 90s Productivity Challenge • Pure HTML/CSS/JS • Mobile-Friendly</p>
+        <p>Designed for Play Store Release • ₹10 Version</p>
+    </div>
+
+    <script>
+        // Game State
+        let gameState = {
+            score: 0,
+            level: 1,
+            lives: 3,
+            tasksCompleted: 0,
+            tasksTotal: 5,
+            timeRemaining: 30,
+            maxTime: 30,
+            gameActive: false,
+            gamePaused: false,
+            tasks: [],
+            taskSpeed: 1500, // Time tasks stay on screen (ms)
+            spawnRate: 800, // Time between new tasks (ms)
+            gameLoopInterval: null,
+            timeInterval: null,
+            difficulty: 'normal'
+        };
+        
+        // High Scores
+        let highScores = JSON.parse(localStorage.getItem('productivityHighScores')) || [];
+        
+        // Settings
+        let settings = JSON.parse(localStorage.getItem('gameSettings')) || {
+            difficulty: 'normal',
+            sound: 'on',
+            theme: 'windows95'
+        };
+        
+        // DOM Elements
+        const windows = document.querySelectorAll('.window');
+        const gameArea = document.getElementById('game-area');
+        const scoreDisplay = document.getElementById('score');
+        const levelDisplay = document.getElementById('level');
+        const livesDisplay = document.getElementById('lives');
+        const tasksCompletedDisplay = document.getElementById('tasks-completed');
+        const tasksTotalDisplay = document.getElementById('tasks-total');
+        const timeProgress = document.getElementById('time-progress');
+        const levelDisplayMain = document.getElementById('level-display');
+        const finalScoreDisplay = document.getElementById('final-score');
+        const finalLevelDisplay = document.getElementById('final-level');
+        const highScoresBody = document.getElementById('high-scores-body');
+        const difficultySelect = document.getElementById('difficulty');
+        const soundSelect = document.getElementById('sound');
+        const themeSelect = document.getElementById('theme');
+        
+        // Initialize
+        document.addEventListener('DOMContentLoaded', function() {
+            // Load settings
+            loadSettings();
+            
+            // Load high scores
+            loadHighScores();
+            
+            // Set up menu buttons
+            document.querySelectorAll('.title-bar-button').forEach(button => {
+                button.addEventListener('click', function() {
+                    const window = this.closest('.window');
+                    const windowId = window.id;
+                    
+                    if (windowId === 'game' && gameState.gameActive && !gameState.gamePaused) {
+                        pauseGame();
+                    }
+                    
+                    showWindow('main-menu');
+                });
+            });
+            
+            // Initialize game area size
+            resizeGameArea();
+            window.addEventListener('resize', resizeGameArea);
+        });
+        
+        // Window Navigation
+        function showWindow(windowId) {
+            windows.forEach(window => {
+                window.classList.remove('active');
+            });
+            
+            document.getElementById(windowId).classList.add('active');
+            
+            // Special handling for certain windows
+            if (windowId === 'high-scores') {
+                loadHighScores();
+            } else if (windowId === 'game' && !gameState.gameActive) {
+                resetGame();
+            } else if (windowId === 'main-menu' && gameState.gameActive && !gameState.gamePaused) {
+                pauseGame();
+            }
+        }
+        
+        // Game Functions
+        function startGame() {
+            showWindow('game');
+            resetGame();
+            
+            gameState.gameActive = true;
+            gameState.gamePaused = false;
+            document.getElementById('pause-btn').textContent = 'Pause';
+            
+            // Start game loops
+            startGameLoop();
+            startTimer();
+        }
+        
+        function resetGame() {
+            // Clear existing tasks
+            gameArea.innerHTML = '';
+            gameState.tasks = [];
+            
+            // Reset game state based on difficulty
+            gameState.score = 0;
+            gameState.level = 1;
+            gameState.lives = 3;
+            gameState.tasksCompleted = 0;
+            
+            // Set initial values based on difficulty
+            updateDifficultySettings();
+            
+            gameState.timeRemaining = gameState.maxTime;
+            
+            // Update displays
+            updateDisplays();
+            
+            // Clear any existing intervals
+            if (gameState.gameLoopInterval) clearInterval(gameState.gameLoopInterval);
+            if (gameState.timeInterval) clearInterval(gameState.timeInterval);
+        }
+        
+        function updateDifficultySettings() {
+            // Adjust game parameters based on difficulty
+            switch(settings.difficulty) {
+                case 'easy':
+                    gameState.tasksTotal = 4 + gameState.level;
+                    gameState.maxTime = 35 - gameState.level * 2;
+                    gameState.taskSpeed = 1800 - gameState.level * 100;
+                    gameState.spawnRate = 1000 - gameState.level * 50;
+                    break;
+                case 'normal':
+                    gameState.tasksTotal = 5 + gameState.level;
+                    gameState.maxTime = 30 - gameState.level * 2;
+                    gameState.taskSpeed = 1500 - gameState.level * 100;
+                    gameState.spawnRate = 800 - gameState.level * 50;
+                    break;
+                case 'hard':
+                    gameState.tasksTotal = 6 + gameState.level * 1.5;
+                    gameState.maxTime = 25 - gameState.level * 2;
+                    gameState.taskSpeed = 1200 - gameState.level * 100;
+                    gameState.spawnRate = 600 - gameState.level * 40;
+                    break;
+                case 'insane':
+                    gameState.tasksTotal = 8 + gameState.level * 2;
+                    gameState.maxTime = 20 - gameState.level;
+                    gameState.taskSpeed = 800 - gameState.level * 50;
+                    gameState.spawnRate = 400 - gameState.level * 20;
+                    break;
+            }
+            
+            // Ensure minimum values
+            gameState.maxTime = Math.max(10, gameState.maxTime);
+            gameState.taskSpeed = Math.max(300, gameState.taskSpeed);
+            gameState.spawnRate = Math.max(200, gameState.spawnRate);
+            
+            // Update display
+            tasksTotalDisplay.textContent = Math.floor(gameState.tasksTotal);
+            gameState.timeRemaining = gameState.maxTime;
+            updateTimeProgress();
+        }
+        
+        function startGameLoop() {
+            gameState.gameLoopInterval = setInterval(function() {
+                if (gameState.gamePaused || !gameState.gameActive) return;
+                
+                // Spawn new task if we haven't reached the total
+                if (gameState.tasks.length < gameState.tasksTotal) {
+                    spawnTask();
+                }
+                
+                // Check if level is complete
+                if (gameState.tasksCompleted >= gameState.tasksTotal) {
+                    completeLevel();
+                }
+            }, gameState.spawnRate);
+        }
+        
+        function startTimer() {
+            gameState.timeInterval = setInterval(function() {
+                if (gameState.gamePaused || !gameState.gameActive) return;
+                
+                gameState.timeRemaining--;
+                updateTimeProgress();
+                
+                if (gameState.timeRemaining <= 0) {
+                    // Time's up - lose a life
+                    loseLife();
+                    
+                    // Reset time for next round
+                    gameState.timeRemaining = gameState.maxTime;
+                    updateTimeProgress();
+                }
+            }, 1000);
+        }
+        
+        function spawnTask() {
+            const gameAreaRect = gameArea.getBoundingClientRect();
+            const taskSize = 60;
+            
+            // Calculate position (avoid edges)
+            const maxX = gameAreaRect.width - taskSize - 10;
+            const maxY = gameAreaRect.height - taskSize - 10;
+            
+            const x = Math.floor(Math.random() * maxX) + 5;
+            const y = Math.floor(Math.random() * maxY) + 5;
+            
+            // Create task element
+            const task = document.createElement('div');
+            task.className = 'task';
+            task.style.left = `${x}px`;
+            task.style.top = `${y}px`;
+            task.textContent = Math.floor(Math.random() * 9) + 1; // Random number 1-9
+            
+            // Add click handler
+            task.addEventListener('click', function() {
+                completeTask(this);
+            });
+            
+            // Add to game area
+            gameArea.appendChild(task);
+            gameState.tasks.push(task);
+            
+            // Remove task after time expires
+            setTimeout(() => {
+                if (task.parentNode && !task.classList.contains('completed')) {
+                    task.classList.add('failed');
+                    setTimeout(() => {
+                        if (task.parentNode) {
+                            gameArea.removeChild(task);
+                            const index = gameState.tasks.indexOf(task);
+                            if (index > -1) {
+                                gameState.tasks.splice(index, 1);
+                            }
+                            
+                            // Lose a life for missed task
+                            loseLife();
+                        }
+                    }, 300);
+                }
+            }, gameState.taskSpeed);
+        }
+        
+        function completeTask(taskElement) {
+            if (taskElement.classList.contains('completed') || 
+                taskElement.classList.contains('failed') ||
+                gameState.gamePaused) return;
+            
+            // Mark as completed
+            taskElement.classList.add('completed');
+            taskElement.textContent = '✓';
+            
+            // Update game state
+            gameState.tasksCompleted++;
+            gameState.score += 10 * gameState.level;
+            
+            // Update displays
+            updateDisplays();
+            
+            // Remove task after animation
+            setTimeout(() => {
+                if (taskElement.parentNode) {
+                    gameArea.removeChild(taskElement);
+                    const index = gameState.tasks.indexOf(taskElement);
+                    if (index > -1) {
+                        gameState.tasks.splice(index, 1);
+                    }
+                }
+            }, 500);
+            
+            // Play sound if enabled
+            if (settings.sound === 'on') {
+                playSound('click');
+            }
+        }
+        
+        function completeLevel() {
+            // Calculate time bonus
+            const timeBonus = Math.floor(gameState.timeRemaining) * gameState.level;
+            gameState.score += timeBonus + (100 * gameState.level);
+            
+            // Advance to next level
+            gameState.level++;
+            gameState.tasksCompleted = 0;
+            
+            // Update difficulty for new level
+            updateDifficultySettings();
+            
+            // Clear existing tasks
+            gameArea.innerHTML = '';
+            gameState.tasks = [];
+            
+            // Update displays
+            updateDisplays();
+            
+            // Show level up message
+            showMessage(`Level ${gameState.level - 1} Complete! Bonus: ${timeBonus + (100 * (gameState.level - 1))} points`);
+            
+            // Play sound if enabled
+            if (settings.sound === 'on') {
+                playSound('levelup');
+            }
+        }
+        
+        function loseLife() {
+            gameState.lives--;
+            updateDisplays();
+            
+            if (gameState.lives <= 0) {
+                gameOver();
+            } else {
+                showMessage('Task missed! Lives remaining: ' + gameState.lives);
+                
+                // Play sound if enabled
+                if (settings.sound === 'on') {
+                    playSound('error');
+                }
+            }
+        }
+        
+        function gameOver() {
+            gameState.gameActive = false;
+            
+            // Clear intervals
+            clearInterval(gameState.gameLoopInterval);
+            clearInterval(gameState.timeInterval);
+            
+            // Update final score display
+            finalScoreDisplay.textContent = gameState.score;
+            finalLevelDisplay.textContent = gameState.level;
+            
+            // Show game over screen
+            showWindow('game-over');
+            
+            // Play sound if enabled
+            if (settings.sound === 'on') {
+                playSound('gameover');
+            }
+        }
+        
+        function pauseGame() {
+            if (!gameState.gameActive) return;
+            
+            gameState.gamePaused = !gameState.gamePaused;
+            const pauseBtn = document.getElementById('pause-btn');
+            
+            if (gameState.gamePaused) {
+                pauseBtn.textContent = 'Resume';
+                showMessage('Game Paused');
+            } else {
+                pauseBtn.textContent = 'Pause';
+                showMessage('Game Resumed');
+            }
+        }
+        
+        function updateDisplays() {
+            scoreDisplay.textContent = gameState.score;
+            levelDisplay.textContent = gameState.level;
+            levelDisplayMain.textContent = gameState.level;
+            livesDisplay.textContent = gameState.lives;
+            tasksCompletedDisplay.textContent = gameState.tasksCompleted;
+            tasksTotalDisplay.textContent = Math.floor(gameState.tasksTotal);
+            updateTimeProgress();
+        }
+        
+        function updateTimeProgress() {
+            const percent = (gameState.timeRemaining / gameState.maxTime) * 100;
+            timeProgress.style.width = `${percent}%`;
+            
+            // Change color based on time remaining
+            if (percent < 25) {
+                timeProgress.style.backgroundColor = '#c00000';
+            } else if (percent < 50) {
+                timeProgress.style.backgroundColor = '#c0c000';
+            } else {
+                timeProgress.style.backgroundColor = '#000080';
+            }
+        }
+        
+        function showMessage(text) {
+            // Create message element
+            const message = document.createElement('div');
+            message.textContent = text;
+            message.style.position = 'absolute';
+            message.style.top = '50%';
+            message.style.left = '50%';
+            message.style.transform = 'translate(-50%, -50%)';
+            message.style.backgroundColor = 'rgba(0, 0, 0, 0.8)';
+            message.style.color = 'white';
+            message.style.padding = '10px 20px';
+            message.style.borderRadius = '5px';
+            message.style.zIndex = '1000';
+            message.style.fontWeight = 'bold';
+            message.style.textAlign = 'center';
+            
+            // Add to game area
+            gameArea.appendChild(message);
+            
+            // Remove after delay
+            setTimeout(() => {
+                if (message.parentNode) {
+                    gameArea.removeChild(message);
+                }
+            }, 1500);
+        }
+        
+        // High Scores Functions
+        function saveScore() {
+            const playerName = document.getElementById('player-name').value.trim() || 'Anonymous';
+            const playerScore = gameState.score;
+            const playerLevel = gameState.level;
+            
+            // Create score object
+            const scoreObj = {
+                name: playerName.substring(0, 20),
+                score: playerScore,
+                level: playerLevel,
+                date: new Date().toLocaleDateString()
+            };
+            
+            // Add to high scores
+            highScores.push(scoreObj);
+            
+            // Sort by score (descending)
+            highScores.sort((a, b) => b.score - a.score);
+            
+            // Keep only top 10 scores
+            highScores = highScores.slice(0, 10);
+            
+            // Save to localStorage
+            localStorage.setItem('productivityHighScores', JSON.stringify(highScores));
+            
+            // Reload high scores display
+            loadHighScores();
+            
+            // Show confirmation
+            alert(`Score saved! You ranked #${highScores.findIndex(s => s.score === playerScore) + 1}`);
+            
+            // Return to main menu
+            showWindow('main-menu');
+        }
+        
+        function loadHighScores() {
+            highScoresBody.innerHTML = '';
+            
+            if (highScores.length === 0) {
+                highScoresBody.innerHTML = '<tr><td colspan="5" style="text-align: center;">No scores yet. Be the first!</td></tr>';
+                return;
+            }
+            
+            highScores.forEach((score, index) => {
+                const row = document.createElement('tr');
+                row.innerHTML = `
+                    <td>${index + 1}</td>
+                    <td>${score.name}</td>
+                    <td>${score.score}</td>
+                    <td>${score.level}</td>
+                    <td>${score.date}</td>
+                `;
+                highScoresBody.appendChild(row);
+            });
+        }
+        
+        function clearScores() {
+            if (confirm('Are you sure you want to clear all high scores?')) {
+                highScores = [];
+                localStorage.removeItem('productivityHighScores');
+                loadHighScores();
+            }
+        }
+        
+        // Settings Functions
+        function loadSettings() {
+            difficultySelect.value = settings.difficulty;
+            soundSelect.value = settings.sound;
+            themeSelect.value = settings.theme;
+        }
+        
+        function saveSettings() {
+            settings.difficulty = difficultySelect.value;
+            settings.sound = soundSelect.value;
+            settings.theme = themeSelect.value;
+            
+            localStorage.setItem('gameSettings', JSON.stringify(settings));
+            
+            // Apply theme if game is active
+            applyTheme();
+            
+            showMessage('Settings saved!');
+            setTimeout(() => showWindow('main-menu'), 1000);
+        }
+        
+        function applyTheme() {
+            // This would apply different visual themes
+            // For now, we just store the preference
+            console.log('Theme set to:', settings.theme);
+        }
+        
+        // Sound Functions
+        function playSound(type) {
+            // Create audio context for simple sound effects
+            try {
+                const audioContext = new (window.AudioContext || window.webkitAudioContext)();
+                
+                if (type === 'click') {
+                    // Click sound
+                    const oscillator = audioContext.createOscillator();
+                    const gainNode = audioContext.createGain();
+                    
+                    oscillator.connect(gainNode);
+                    gainNode.connect(audioContext.destination);
+                    
+                    oscillator.frequency.value = 800;
+                    oscillator.type = 'sine';
+                    
+                    gainNode.gain.setValueAtTime(0.3, audioContext.currentTime);
+                    gainNode.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime + 0.1);
+                    
+                    oscillator.start(audioContext.currentTime);
+                    oscillator.stop(audioContext.currentTime + 0.1);
+                } else if (type === 'error') {
+                    // Error sound
+                    const oscillator = audioContext.createOscillator();
+                    const gainNode = audioContext.createGain();
+                    
+                    oscillator.connect(gainNode);
+                    gainNode.connect(audioContext.destination);
+                    
+                    oscillator.frequency.value = 300;
+                    oscillator.type = 'sawtooth';
+                    
+                    gainNode.gain.setValueAtTime(0.3, audioContext.currentTime);
+                    gainNode.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime + 0.3);
+                    
+                    oscillator.start(audioContext.currentTime);
+                    oscillator.stop(audioContext.currentTime + 0.3);
+                }
+            } catch (e) {
+                console.log('Audio not supported or disabled');
+            }
+        }
+        
+        // Utility Functions
+        function resizeGameArea() {
+            // Make sure game area fits mobile screens
+            const windowHeight = window.innerHeight;
+            const maxHeight = windowHeight * 0.5; // 50% of screen height
+            
+            if (gameArea) {
+                gameArea.style.height = `${Math.min(300, maxHeight)}px`;
+            }
+        }
+    </script>
+</body>
+</html>
